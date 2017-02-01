@@ -1,6 +1,9 @@
 ///////////////////////////////////////////////////////////
 // Includes
 
+// Database
+var sequelize = require("sequelize");
+
 // Express
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -10,11 +13,38 @@ var sessionStorage = require("./session.js");
 // Process for loging functionality
 var process = require('process');
 
+///////////////////////////////////////////////////////////
+// Startup & Setup
+process.on('uncaughtException', errorWithLineNumbers);
+process.on('SIGINT', shutDown);
 //TODO: Write some better logging stuff which can be disabled
 console.log("\n====Starting awesome server!====");
 
-process.on('uncaughtException', errorWithLineNumbers);
-process.on('SIGINT', shutDown);
+
+// Setup database
+var dbType = "sqlite"; // TODO: Switch to mysql or postgress or something
+
+var connection = new sequelize("cookbook", "root", "nOHHDvNc88WQddUjXPuo", {
+	host: "localhost",
+	dialect: dbType,
+	pool: { max: 5, min: 0, idle: 10000 },
+	storage: "./db.sqlite"
+});
+
+var models = require("./models/sqlModels.js")(sequelize, connection);
+
+var promises = [];
+Object.keys(models).forEach(item =>{
+	promises.push(models[item].sync());
+});
+
+Promise.all(promises).then(values => {
+	console.log("Done creating tables!");
+	/*models.recipies.create({
+		name: "Random recipie #" + (Math.random() * 1000)
+	});*/
+});
+
 
 // Setup Express
 var app = express();
@@ -22,17 +52,29 @@ app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
+
 // Session handling
 app.use(session({
-	secret: "ADD SECRET STRING HERE",
+	secret: "MUhC1yZymZPYurctfjXF",
 	store: sessionStorage(session.Store),
 	resave: true,
 	saveUninitialized: false
 }));
 
 app.use(express.static('public'));
-app.use("/libs", express.static('node_modules')); //TODO: Don't expose all of node modules
+app.use("/api", function(req, res){
+	models.recipies.findAll().then((result) =>{
+		var out = "";
+		if(result){
+			result.forEach((row) =>{
+				out += JSON.stringify(row.toJSON());
+			});
+		}
+		res.json(result);
+	});
+});
 
+// Start server
 var server = app.listen(3000, function () {
   var host = server.address().address;
   var port = server.address().port;
