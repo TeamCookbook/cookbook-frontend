@@ -28,7 +28,7 @@ var connection = new sequelize("cookbook", "root", "nOHHDvNc88WQddUjXPuo", {
 	host: "localhost",
 	dialect: dbType,
 	pool: { max: 5, min: 0, idle: 10000 },
-	storage: "./db.sqlite"
+	storage: "./db/db.sqlite"
 });
 
 var models = require("./models/sqlModels.js")(sequelize, connection);
@@ -40,9 +40,9 @@ Object.keys(models).forEach(item =>{
 
 Promise.all(promises).then(values => {
 	console.log("Done creating tables!");
-	/*models.recipies.create({
+	models.recipies.create({
 		name: "Random recipie #" + (Math.random() * 1000)
-	});*/
+	});
 });
 
 
@@ -62,6 +62,7 @@ app.use(session({
 }));
 
 app.use(express.static('public'));
+app.use("/lib", express.static("node_modules"));
 app.use("/api", function(req, res){
 	models.recipies.findAll().then((result) =>{
 		var out = "";
