@@ -61,8 +61,24 @@ app.use(session({
 	saveUninitialized: false
 }));
 
+///////////////////////////////////////////////////////////
+// Server folders
 app.use(express.static('public'));
-app.use("/lib", express.static("node_modules"));
+
+// 3rd party library folders
+const libWebRoot = "/lib/", libRealRoot = "node_modules/";
+[
+	{ webPath : "bootstrap",		realPath : "bootstrap/dist" },
+	{ webPath : "jquery",			realPath : "jquery/dist" },
+	{ webPath : "tether",			realPath : "tether/dist" },
+	{ webPath : "angular",			realPath : "angular" },
+	{ webPath : "angular-resource",	realPath : "angular-resource" },
+	{ webPath : "angular-route",	realPath : "angular-route" }
+].forEach((lib)=>{
+	app.use(libWebRoot + lib.webPath, express.static(libRealRoot + lib.realPath));
+});
+
+// API calls	
 app.use("/api", function(req, res){
 	models.recipies.findAll().then((result) =>{
 		var out = "";
@@ -83,7 +99,8 @@ var server = app.listen(3000, function () {
   console.log('Web app listening at http://%s:%s', host, port);
 });
 
-//TODO: Decide if i need this
+///////////////////////////////////////////////////////////
+// Error handling & shutdown
 function errorWithLineNumbers(err){
 	var vStack = err.stack.split("\n"), vMaxDepth = 5;
 	if(vStack.length < vMaxDepth) vMaxDepth = vStack.length;

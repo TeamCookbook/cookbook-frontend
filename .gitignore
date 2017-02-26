@@ -28,3 +28,6 @@ node_modules
 
 # Sqlite database
 *.sqlite
+
+# Vim temp swp files
+*.swp
