@@ -83,11 +83,8 @@ app.use("/api", function(req, res){
 	models.recipies.findAll().then((result) =>{
 		var out = "";
 		if(result){
-			result.forEach((row) =>{
-				out += JSON.stringify(row.toJSON());
-			});
+			res.json(result.slice(0, 15));
 		}
-		res.json(result);
 	});
 });
 

@@ -1,11 +1,17 @@
-var app = angular.module("recipiesApp", []);
+var app = angular.module("cookbook", [
+	"ngRoute",
+	"base",
+	"recipies"
+]).config(["$locationProvider", "$routeProvider",
+	function ($locationProvider, $routeProvider){
+		$locationProvider.hashPrefix("!");
 
-$.get("/api", (result) =>{
-	console.log(result);
-	if(result){
-		result.forEach((row) =>{
-			var ptag = $("<p>").appendTo("#thestuff");
-			ptag.text(row.name);
-		});
+		// Application sites
+		$routeProvider.
+			when("/recipies", {
+				template: "<recipies-list></recipies-list>"
+			}).
+			otherwise("/recipies");
 	}
-});
+]);
+
