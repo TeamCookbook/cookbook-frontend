@@ -1,12 +1,17 @@
 // Require sequelize to initialize models
 module.exports = (sequelize, connection) =>{
 	var models = {};
+
+	///////////////////////////////////////
+	// Table definitions
 	
+	// Users
 	models.users = connection.define("users", {
 		userName: { type: sequelize.STRING, field: "username", primaryKey: true },
 		password: { type: sequelize.STRING(128), field: "password" }
 	}, { freezeTableName: true });
 
+	// Recipes
 	models.recipies = connection.define("recipies", {
 		id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
 		name: { type: sequelize.STRING(200), field: "name" },
@@ -15,6 +20,7 @@ module.exports = (sequelize, connection) =>{
 		lastMade: { type: sequelize.DATE, field: "last_made" }
 	}, { freezeTableName: true });
 
+	// Recipe comments
 	models.recipieComments = connection.define("recipie_comments", {
 		id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
 		recipieId: { type: sequelize.INTEGER, field: "recipie_id", references: {
@@ -24,6 +30,7 @@ module.exports = (sequelize, connection) =>{
 		comment: { type: sequelize.STRING, field: "comment" }
 	}, { freezeTableName: true });
 
+	// Recipe images
 	models.recipieImages = connection.define("recipie_images", {
 		id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
 		recipieId: { type: sequelize.INTEGER, field: "recipie_id", references: {
@@ -33,6 +40,7 @@ module.exports = (sequelize, connection) =>{
 		header: { type: sequelize.BOOLEAN, field: "header" }
 	}, { freezeTableName: true });
 
+	// Recipe steps
 	models.recipieSteps = connection.define("recipie_steps", {
 		id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
 		recipieId: { type: sequelize.INTEGER, field: "recipie_id", references: {
@@ -42,6 +50,7 @@ module.exports = (sequelize, connection) =>{
 		sort: { type: sequelize.INTEGER, field: "sort" }
 	}, { freezeTableName: true });
 
+	// Ingredient groups
 	models.recipieIngredientGroups = connection.define("recipie_ingredient_groups", {
 		id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
 		recipieId: { type: sequelize.INTEGER, field: "recipie_id", references: {
@@ -51,6 +60,7 @@ module.exports = (sequelize, connection) =>{
 		sort: { type: sequelize.INTEGER, field: "sort" }
 	}, { freezeTableName: true });
 
+	// Ignredients
 	models.ingredients = connection.define("ingredients", {
 		id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
 		name: { type: sequelize.STRING(200), field: "name" },
@@ -58,6 +68,7 @@ module.exports = (sequelize, connection) =>{
 		standardUnit: { type: sequelize.INTEGER, field: "standard_unit" }
 	}, { freezeTableName: true });
 
+	// Recipe ingredients (links ingredients to recipes with amounts)
 	models.recipieIngredients = connection.define("recipie_ingredients", {
 		id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
 		groupId: { type: sequelize.INTEGER, field: "recipie_group_id", references: {
@@ -70,6 +81,7 @@ module.exports = (sequelize, connection) =>{
 		sort: { type: sequelize.INTEGER, field: "sort" }
 	}, { freezeTableName: true });
 
+	// Unit definitions
 	models.units = connection.define("units", {
 		id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
 		name: { type: sequelize.STRING(200), field: "name" },

@@ -15,9 +15,9 @@ var process = require('process');
 
 ///////////////////////////////////////////////////////////
 // Startup & Setup
+//TODO: Write some better logging stuff which can be disabled
 process.on('uncaughtException', errorWithLineNumbers);
 process.on('SIGINT', shutDown);
-//TODO: Write some better logging stuff which can be disabled
 console.log("\n====Starting awesome server!====");
 
 
@@ -40,9 +40,9 @@ Object.keys(models).forEach(item =>{
 
 Promise.all(promises).then(values => {
 	console.log("Done creating tables!");
-	models.recipies.create({
+	/*models.recipies.create({
 		name: "Random recipie #" + (Math.random() * 1000)
-	});
+	});*/
 });
 
 
@@ -54,12 +54,12 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 // Session handling
-app.use(session({
+/*app.use(session({
 	secret: "MUhC1yZymZPYurctfjXF",
 	store: sessionStorage(session.Store),
 	resave: true,
 	saveUninitialized: false
-}));
+}));*/
 
 ///////////////////////////////////////////////////////////
 // Server folders
@@ -78,7 +78,7 @@ const libWebRoot = "/lib/", libRealRoot = "node_modules/";
 	app.use(libWebRoot + lib.webPath, express.static(libRealRoot + lib.realPath));
 });
 
-// API calls	
+// test API call
 app.use("/api", function(req, res){
 	models.recipies.findAll().then((result) =>{
 		var out = "";
