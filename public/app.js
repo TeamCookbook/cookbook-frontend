@@ -1,7 +1,8 @@
 var app = angular.module("cookbook", [
 	"ngRoute",
 	"base",
-	"recipies"
+	"recipies",
+	"login"
 ]).config(["$locationProvider", "$routeProvider",
 	function ($locationProvider, $routeProvider){
 		$locationProvider.hashPrefix("!");
@@ -10,6 +11,9 @@ var app = angular.module("cookbook", [
 		$routeProvider.
 			when("/recipies", {
 				template: "<recipies-list></recipies-list>"
+			}).
+			when("/login", {
+				template: "<login-form></login-form>"
 			}).
 			otherwise("/recipies");
 	}

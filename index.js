@@ -10,6 +10,11 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var sessionStorage = require("./session.js");
 
+// Express endpoints
+var endpointsArray = [
+	require("./endpoints/users.js")
+];
+
 // Process for loging functionality
 var process = require('process');
 
@@ -73,18 +78,15 @@ const libWebRoot = "/lib/", libRealRoot = "node_modules/";
 	{ webPath : "tether",			realPath : "tether/dist" },
 	{ webPath : "angular",			realPath : "angular" },
 	{ webPath : "angular-resource",	realPath : "angular-resource" },
-	{ webPath : "angular-route",	realPath : "angular-route" }
+	{ webPath : "angular-route",	realPath : "angular-route" },
+	{ webPath : "js-sha512",		realPath : "js-sha512" }
 ].forEach((lib)=>{
 	app.use(libWebRoot + lib.webPath, express.static(libRealRoot + lib.realPath));
 });
 
-// test API call
-app.use("/api", function(req, res){
-	models.recipies.findAll().then((result) =>{
-		var out = "";
-		if(result){
-			res.json(result.slice(0, 15));
-		}
+endpointsArray.forEach((endpointCollection) => {
+	endpointCollection.forEach((endpoint) => {
+		app[endpoint.method]("/api" + endpoint.path, endpoint.handler);
 	});
 });
 
