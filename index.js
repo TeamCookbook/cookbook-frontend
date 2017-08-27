@@ -10,11 +10,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var sessionStorage = require("./session.js");
 
-// Express endpoints
-var endpointsArray = [
-	require("./endpoints/users.js")
-];
-
 // Process for loging functionality
 var process = require('process');
 
@@ -41,62 +36,70 @@ var models = require("./models/sqlModels.js")(sequelize, connection);
 var promises = [];
 Object.keys(models).forEach(item =>{
 	promises.push(models[item].sync());
+	//promises.push(models[item].sync({force : true})); // Force will drop tables AKA delete all data!!
 });
 
 Promise.all(promises).then(values => {
-	console.log("Done creating tables!");
+	//console.log("Done creating tables!");
 	/*models.recipies.create({
 		name: "Random recipie #" + (Math.random() * 1000)
 	});*/
-});
+
+	// Setup Express
+	var app = express();
+	app.use( bodyParser.json() );       // to support JSON-encoded bodies
+	app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+		extended: true
+	}));
+
+	// Session handling
+	/*app.use(session({
+		secret: "MUhC1yZymZPYurctfjXF",
+		store: sessionStorage(session.Store),
+		resave: true,
+		saveUninitialized: false
+	}));*/
+
+	///////////////////////////////////////////////////////////
+	// Server folders
+	app.use(express.static('public'));
+
+	// 3rd party library folders
+	const libWebRoot = "/lib/", libRealRoot = "node_modules/";
+	[
+		{ webPath : "bootstrap",		realPath : "bootstrap/dist" },
+		{ webPath : "jquery",			realPath : "jquery/dist" },
+		{ webPath : "tether",			realPath : "tether/dist" },
+		{ webPath : "angular",			realPath : "angular" },
+		{ webPath : "angular-resource",	realPath : "angular-resource" },
+		{ webPath : "angular-route",	realPath : "angular-route" },
+		{ webPath : "js-sha512",		realPath : "js-sha512" }
+	].forEach((lib)=>{
+		app.use(libWebRoot + lib.webPath, express.static(libRealRoot + lib.realPath));
+	});
 
 
-// Setup Express
-var app = express();
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-}));
+	// Express endpoints
+	var endpointsArray = [
+		require("./endpoints/users.js")(models)
+	];
 
-// Session handling
-/*app.use(session({
-	secret: "MUhC1yZymZPYurctfjXF",
-	store: sessionStorage(session.Store),
-	resave: true,
-	saveUninitialized: false
-}));*/
+	endpointsArray.forEach((endpointCollection) => {
+		endpointCollection.forEach((endpoint) => {
+			app[endpoint.method]("/api" + endpoint.path, endpoint.handler);
+		});
+	});
 
-///////////////////////////////////////////////////////////
-// Server folders
-app.use(express.static('public'));
+	// Start server
+	var server = app.listen(3000, function () {
+		var host = server.address().address;
+		var port = server.address().port;
 
-// 3rd party library folders
-const libWebRoot = "/lib/", libRealRoot = "node_modules/";
-[
-	{ webPath : "bootstrap",		realPath : "bootstrap/dist" },
-	{ webPath : "jquery",			realPath : "jquery/dist" },
-	{ webPath : "tether",			realPath : "tether/dist" },
-	{ webPath : "angular",			realPath : "angular" },
-	{ webPath : "angular-resource",	realPath : "angular-resource" },
-	{ webPath : "angular-route",	realPath : "angular-route" },
-	{ webPath : "js-sha512",		realPath : "js-sha512" }
-].forEach((lib)=>{
-	app.use(libWebRoot + lib.webPath, express.static(libRealRoot + lib.realPath));
-});
-
-endpointsArray.forEach((endpointCollection) => {
-	endpointCollection.forEach((endpoint) => {
-		app[endpoint.method]("/api" + endpoint.path, endpoint.handler);
+		console.log('Web app listening at http://%s:%s', host, port);
 	});
 });
 
-// Start server
-var server = app.listen(3000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
 
-  console.log('Web app listening at http://%s:%s', host, port);
-});
 
 ///////////////////////////////////////////////////////////
 // Error handling & shutdown

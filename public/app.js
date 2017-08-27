@@ -15,6 +15,9 @@ var app = angular.module("cookbook", [
 			when("/login", {
 				template: "<login-form></login-form>"
 			}).
+			when("/register", {
+				template: "<register-form></register-form>"
+			}).
 			otherwise("/recipies");
 	}
 ]);

@@ -8,7 +8,8 @@ module.exports = (sequelize, connection) =>{
 	// Users
 	models.users = connection.define("users", {
 		userName: { type: sequelize.STRING, field: "username", primaryKey: true },
-		password: { type: sequelize.STRING(128), field: "password" }
+		password: { type: sequelize.STRING(128), field: "password" },
+		salt: { type: sequelize.STRING(128), field: "salt" }
 	}, { freezeTableName: true });
 
 	// Recipes
