@@ -8,7 +8,7 @@ var sequelize = require("sequelize");
 var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var sessionStorage = require("./session.js");
+var sequelizeSessionStorage = require("connect-session-sequelize")(session.Store);
 
 // Process for loging functionality
 var process = require('process');
@@ -39,6 +39,11 @@ Object.keys(models).forEach(item =>{
 	//promises.push(models[item].sync({force : true})); // Force will drop tables AKA delete all data!!
 });
 
+var sessionStoreInstance = new sequelizeSessionStorage({
+	db: connection
+});
+promises.push(sessionStoreInstance.sync());
+
 Promise.all(promises).then(values => {
 	//console.log("Done creating tables!");
 	/*models.recipies.create({
@@ -53,12 +58,12 @@ Promise.all(promises).then(values => {
 	}));
 
 	// Session handling
-	/*app.use(session({
+	app.use(session({
 		secret: "MUhC1yZymZPYurctfjXF",
-		store: sessionStorage(session.Store),
+		store: sessionStoreInstance,
 		resave: true,
 		saveUninitialized: false
-	}));*/
+	}));
 
 	///////////////////////////////////////////////////////////
 	// Server folders

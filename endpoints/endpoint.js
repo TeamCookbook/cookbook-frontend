@@ -18,6 +18,18 @@ module.exports = {
 	// Shorthand for sending an error message
 	error : (code, message, res) => {
 		res.status(code).send({error: message});
+	},
+
+	// Function for starting a new session
+	startSession : (req, username) => {
+		req.session.userLoggedIn = true;
+		req.session.currentUser = username;
+	},
+
+	// Kill the current session (log out)
+	stopSession : (req) => {
+		req.session.userLoggedIn = false;
+		req.session.currentUser = null;
 	}
 };
 
