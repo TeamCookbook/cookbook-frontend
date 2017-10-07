@@ -1,19 +1,19 @@
 <h1>Login</h1>
 <form ng-submit="$ctrl.login()">
 
-	<div class="col-xs-6">
-		<pre>{{$ctrl.userStatus}}</pre>
-		<div ng-show="$ctrl.error" class="alert alert-danger" role="alert">
-			<label>{{$ctrl.error}}</label>
-			<a ng-click="$ctrl.clearError()" class="float-right">&times;</a>
-		</div>
-		<input name="username" ng-model="$ctrl.username"/>
-		<input name="password" type="password" ng-model="$ctrl.password"/>
+    <div class="col-xs-6">
+        <pre>{{$ctrl.userStatus}}</pre>
+        <div ng-show="$ctrl.error" class="alert alert-danger" role="alert">
+            <label>{{$ctrl.error}}</label>
+            <a ng-click="$ctrl.clearError()" class="float-right">&times;</a>
+        </div>
+        <input name="username" ng-model="$ctrl.username"/>
+        <input name="password" type="password" ng-model="$ctrl.password"/>
 
-		<button type="submit" class="btn btn-default">Login</button>
-		<button type="button" class="btn btn-default" ng-click="$ctrl.logout()">Logout</button>
-		<button type="button" class="hidden-xs-up btn btn-default" ng-click="$ctrl.checkStatus()">Check Status</button>
-		<button type="button" class="hidden-xs-up btn btn-danger" ng-click="$ctrl.deleteUser()">Delete user</button>
-	</div>
-	<div class="col-xs-12" ng-show="$ctrl.loading">Loading</div>
+        <button type="submit" class="btn btn-default">Login</button>
+        <button type="button" class="btn btn-default" ng-click="$ctrl.logout()">Logout</button>
+        <button type="button" class="hidden-xs-up btn btn-default" ng-click="$ctrl.checkStatus()">Check Status</button>
+        <button type="button" class="hidden-xs-up btn btn-danger" ng-click="$ctrl.deleteUser()">Delete user</button>
+    </div>
+    <div class="col-xs-12" ng-show="$ctrl.loading">Loading</div>
 </form>
