@@ -17,12 +17,9 @@ angular.module("login", []).
 							pass : sha512(self.password)
 						}).then((result) => {
 							self.loading = false;
-							console.log(result);
 							self.checkStatus();
 						}, (error) => {
-							// OMG ERROR
 							self.loading = false;
-							console.log(error);
 							self.checkStatus();
 						});
 					}
@@ -37,21 +34,16 @@ angular.module("login", []).
 				};
 
 				self.deleteUser = function() {
-					console.log("UM....");
 					if(!self.username) self.error = "Tell me what user to delete!";
 					else {
-						console.log("DELETE IT");
 						self.loading = true;
 						$http.post("/api/users/delete", {
 							user : self.username
 						}).then((result) => {
 							self.loading = false;
-							console.log(result);
 							self.checkStatus();
 						}, (error) => {
-							// OMG ERROR
 							self.loading = false;
-							console.log(error);
 							self.checkStatus();
 						});
 					}
@@ -59,9 +51,12 @@ angular.module("login", []).
 
 				self.checkStatus = function() {
 					self.loading = true;
-					$http.get("/api/users").then((result) => {
+					$http.get("/api/users/me").then((result) => {
 						self.loading = false;
-						self.userStatus = result.data.status;
+						self.userStatus = "Logged in as " + result.data;
+					}, (error) => {
+						self.loading = false;
+						self.userStatus = error.data.error;
 					});
 				};
 

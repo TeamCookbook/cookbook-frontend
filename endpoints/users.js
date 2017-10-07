@@ -1,18 +1,24 @@
-const endpoint = require("./endpoint.js");
 const crypto = require("crypto");
+const endpoint = require("./endpoint.js");
 
 module.exports = (models) =>{
 	return [
 		// GET all users
 		endpoint.create("/users", "get", (req, res) => {
-			if(req.session.userLoggedIn) {
-				res.send({status : "You are logged in!"});
-			}else {
-				res.send({status : "You are not authorized!"});
+			if(!req.session.userLoggedIn) endpoint.error(401, "Unauthorized", res);
+			else {
+				models.users.findAll().then((result) => {
+					res.send(result);
+				});
 			}
 		}),
 
-		// TODO: This should obviously be authenticated!
+		// GET own user
+		endpoint.create("/users/me", "get", (req, res) => {
+			if(!req.session.userLoggedIn) endpoint.error(401, "Unauthorized", res);
+			else res.send(req.session.currentUser);
+		}),
+
 		endpoint.create("/users/delete", "post", (req, res) => {
 			if(!req.session.userLoggedIn) endpoint.error(401, "Unauthorized", res);
 			else if(!req.body) endpoint.error(400, "Missing request body", res);
@@ -23,15 +29,15 @@ module.exports = (models) =>{
 						userName : req.body.user
 					}
 				}).then(() => {
-					res.send("OK THINK I GOT THAT.");
+					res.send({status : "User deleted"});
 				});
 			}
 		}),
 
 		// POST new user
 		endpoint.create("/users/new", "post", (req, res) => {
-			// TODO: Require authentication(?)
-			if(!req.body) endpoint.error(400, "Missing request body", res);
+			if(!req.session.userLoggedIn) endpoint.error(401, "Unauthorized", res);
+			else if(!req.body) endpoint.error(400, "Missing request body", res);
 			else if(!req.body.user) endpoint.error(400, "Missing username", res);
 			else if(!req.body.pass) endpoint.error(400, "Missing password", res);
 			else {
@@ -41,7 +47,7 @@ module.exports = (models) =>{
 					password: passAndSalt.pwHash,
 					salt: passAndSalt.salt
 				});
-				res.send({status : "User created successfully"});
+				res.send({status : "User created"});
 			}
 		}),
 
@@ -62,7 +68,7 @@ module.exports = (models) =>{
 						if(passAndSalt.pwHash === result[0].password) {
 							valid = true;
 							endpoint.startSession(req, result[0].userName);
-							res.send({status: "Yay, you did it! Now we need a session..."});
+							res.send({status: "success"});
 						}
 					}else{
 						// NOTE: We do this to "simulate" a password check,
@@ -86,12 +92,6 @@ module.exports = (models) =>{
 	];
 };
 
-function generateSalt(length){
-	return crypto.randomBytes(Math.ceil(length/2))
-		.toString("hex") /** convert to hexadecimal format */
-		.slice(0,length);   /** return required number of characters */
-}
-
 function sha512(text, salt) {
 	if(!salt) salt = generateSalt(128);
 	var hash = crypto.createHmac("sha512", salt);
@@ -100,4 +100,10 @@ function sha512(text, salt) {
 		salt : salt,
 		pwHash : hash.digest("hex")
 	};
+}
+
+function generateSalt(length){
+	return crypto.randomBytes(Math.ceil(length/2))
+		.toString("hex") /** convert to hexadecimal format */
+		.slice(0,length);   /** return required number of characters */
 }

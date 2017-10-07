@@ -21,31 +21,31 @@ process.on('SIGINT', shutDown);
 console.log("\n====Starting awesome server!====");
 
 
-// Setup database
-var dbType = "sqlite"; // TODO: Switch to mysql or postgress or something
-
-var connection = new sequelize("cookbook", "root", "nOHHDvNc88WQddUjXPuo", {
+// Setup database connection
+var dbConnection = new sequelize("cookbook", "root", "nOHHDvNc88WQddUjXPuo", {
 	host: "localhost",
-	dialect: dbType,
+	dialect: "sqlite", // TODO: Switch to mysql or postgress or something
 	pool: { max: 5, min: 0, idle: 10000 },
 	storage: "./db/db.sqlite"
 });
 
-var models = require("./models/sqlModels.js")(sequelize, connection);
-
-var promises = [];
+// App model definitions
+var models = require("./models/sqlModels.js")(sequelize, dbConnection);
+var modelCreations = [];
 Object.keys(models).forEach(item =>{
-	promises.push(models[item].sync());
-	//promises.push(models[item].sync({force : true})); // Force will drop tables AKA delete all data!!
+	modelCreations.push(models[item].sync());
+	//modelCreations.push(models[item].sync({force : true})); // Force will drop tables AKA delete all data!!
 });
 
+// Session storage model definitions
 var sessionStoreInstance = new sequelizeSessionStorage({
-	db: connection
+	db: dbConnection
 });
-promises.push(sessionStoreInstance.sync());
+modelCreations.push(sessionStoreInstance.sync());
 
-Promise.all(promises).then(values => {
-	//console.log("Done creating tables!");
+// Create/update models
+Promise.all(modelCreations).then(values => {
+    // Create a test recipie
 	/*models.recipies.create({
 		name: "Random recipie #" + (Math.random() * 1000)
 	});*/
@@ -65,8 +65,7 @@ Promise.all(promises).then(values => {
 		saveUninitialized: false
 	}));
 
-	///////////////////////////////////////////////////////////
-	// Server folders
+	// Frontend folder
 	app.use(express.static('public'));
 
 	// 3rd party library folders
@@ -78,20 +77,19 @@ Promise.all(promises).then(values => {
 		{ webPath : "angular",			realPath : "angular" },
 		{ webPath : "angular-resource",	realPath : "angular-resource" },
 		{ webPath : "angular-route",	realPath : "angular-route" },
-		{ webPath : "js-sha512",		realPath : "js-sha512" }
+		{ webPath : "js-sha512",		realPath : "js-sha512" },
+		{ webPath : "popper",			realPath : "popper.js/dist/umd" }
 	].forEach((lib)=>{
 		app.use(libWebRoot + lib.webPath, express.static(libRealRoot + lib.realPath));
 	});
 
-
-	// Express endpoints
+	// Api endpoints
 	var endpointsArray = [
 		require("./endpoints/users.js")(models)
 	];
-
 	endpointsArray.forEach((endpointCollection) => {
 		endpointCollection.forEach((endpoint) => {
-			app[endpoint.method]("/api" + endpoint.path, endpoint.handler);
+			app[endpoint.verb]("/api" + endpoint.path, endpoint.handler);
 		});
 	});
 
@@ -103,7 +101,6 @@ Promise.all(promises).then(values => {
 		console.log('Web app listening at http://%s:%s', host, port);
 	});
 });
-
 
 
 ///////////////////////////////////////////////////////////
