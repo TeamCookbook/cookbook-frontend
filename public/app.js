@@ -1,4 +1,4 @@
-var app = angular.module("cookbook", [
+angular.module("cookbook", [
     "ngRoute",
     "base",
     "recipies",

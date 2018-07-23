@@ -16,7 +16,6 @@ angular.module("login").
                             user : self.username,
                             pass : sha512(self.password)
                         }).then((result) => {
-                            console.log(result);
                             if(!result) self.error = "Unkown error";
                             else if(result.status != 200) self.error = result.data;
                             else self.success = result.data.status;

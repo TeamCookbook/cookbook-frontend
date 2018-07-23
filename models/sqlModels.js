@@ -90,7 +90,9 @@ module.exports = (sequelize, connection) =>{
     }, { freezeTableName: true });
 
     models.log = connection.define("log", {
-    }, freezeTableName: true });
+        id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
+        content: { type: sequelize.STRING(500), field: "content" },
+    }, { freezeTableName: true });
 
     return models;
 };

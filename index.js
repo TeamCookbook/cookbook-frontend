@@ -5,19 +5,20 @@
 var sequelize = require("sequelize");
 
 // Express
-var express = require('express');
-var bodyParser = require('body-parser');
-var session = require('express-session');
+var express = require("express");
+var bodyParser = require("body-parser");
+var session = require("express-session");
 var sequelizeSessionStorage = require("connect-session-sequelize")(session.Store);
 
 // Process for loging functionality
-var process = require('process');
+var process = require("process");
+var logger = require("./logger.js")(process.stdout.write);
 
 ///////////////////////////////////////////////////////////
 // Startup & Setup
 //TODO: Write some better logging stuff which can be disabled
-process.on('uncaughtException', errorWithLineNumbers);
-process.on('SIGINT', shutDown);
+process.on("uncaughtException", errorWithLineNumbers);
+process.on("SIGINT", shutDown);
 console.log("\n====Starting awesome server!====");
 
 
@@ -44,7 +45,7 @@ var sessionStoreInstance = new sequelizeSessionStorage({
 });
 promises.push(sessionStoreInstance.sync());
 
-Promise.all(promises).then(values => {
+Promise.all(promises).then(() => {
     //console.log("Done creating tables!");
     /*models.recipies.create({
         name: "Random recipie #" + (Math.random() * 1000)
@@ -67,18 +68,18 @@ Promise.all(promises).then(values => {
 
     ///////////////////////////////////////////////////////////
     // Server folders
-    app.use(express.static('public'));
+    app.use(express.static("public"));
 
     // 3rd party library folders
     const libWebRoot = "/lib/", libRealRoot = "node_modules/";
     [
-        { webPath : "bootstrap",		realPath : "bootstrap/dist" },
-        { webPath : "jquery",			realPath : "jquery/dist" },
-        { webPath : "tether",			realPath : "tether/dist" },
-        { webPath : "angular",			realPath : "angular" },
-        { webPath : "angular-resource",	realPath : "angular-resource" },
-        { webPath : "angular-route",	realPath : "angular-route" },
-        { webPath : "js-sha512",		realPath : "js-sha512" }
+        { webPath : "bootstrap",        realPath : "bootstrap/dist" },
+        { webPath : "jquery",           realPath : "jquery/dist" },
+        { webPath : "tether",           realPath : "tether/dist" },
+        { webPath : "angular",          realPath : "angular" },
+        { webPath : "angular-resource", realPath : "angular-resource" },
+        { webPath : "angular-route",    realPath : "angular-route" },
+        { webPath : "js-sha512",        realPath : "js-sha512" }
     ].forEach((lib)=>{
         app.use(libWebRoot + lib.webPath, express.static(libRealRoot + lib.realPath));
     });
@@ -100,7 +101,7 @@ Promise.all(promises).then(values => {
         var host = server.address().address;
         var port = server.address().port;
 
-        console.log('Web app listening at http://%s:%s', host, port);
+        console.log("Web app listening at http://%s:%s", host, port);
     });
 });
 
