@@ -11,8 +11,11 @@ var session = require("express-session");
 var sequelizeSessionStorage = require("connect-session-sequelize")(session.Store);
 
 // Process for loging functionality (Needs to be fixed!)
-var process = require("process");
-var logger = require("./logger.js")(process.stdout.write);
+const process = require("process");
+const util = require("util");
+const Logger = require("logger");
+
+var logger = new Logger(process.stdout, util.format, Logger.LogLevel.Debug);
 
 ///////////////////////////////////////////////////////////
 // Startup & Setup
@@ -80,7 +83,7 @@ Promise.all(modelCreations).then((/*values*/) => {
         var host = server.address().address;
         var port = server.address().port;
 
-        console.log("Web app listening at http://%s:%s", host, port);
+        logger.debug("Web app listening at http://%s:%s", host, port);
     });
 });
 

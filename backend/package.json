@@ -23,6 +23,7 @@
         "express-session": "^1.15.6",
         "jquery": "^3.2.1",
         "js-sha512": "^0.4.0",
+        "logger": "git+ssh://git@github.com/marza91/level-logger",
         "mysql": "^2.16.0",
         "popper.js": "^1.11.0",
         "sequelize": "^4.38.1",
