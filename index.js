@@ -91,7 +91,7 @@ Promise.all(modelCreations).then((/*values*/) => {
     ];
     endpointsArray.forEach((endpointCollection) => {
         endpointCollection.forEach((endpoint) => {
-            app[endpoint.verb]("/api" + endpoint.path, endpoint.handler);
+            app[endpoint.method]("/api" + endpoint.path, endpoint.handler);
         });
     });
 
@@ -100,7 +100,7 @@ Promise.all(modelCreations).then((/*values*/) => {
         var host = server.address().address;
         var port = server.address().port;
 
-        logger.debug("Web app listening at http://%s:%s", host, port);
+        console.log("Web app listening at http://%s:%s", host, port);
     });
 });
 

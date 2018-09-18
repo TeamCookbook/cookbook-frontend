@@ -1,7 +1,8 @@
 module.exports = function(output, sql){
     return {
         debug : function(text) {
-            output(text);
+            // output(text);
+            console.log(text);
         },
         error : function(text) {
             sql.create({
