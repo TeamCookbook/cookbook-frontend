@@ -10,7 +10,7 @@ var bodyParser = require("body-parser");
 var session = require("express-session");
 var sequelizeSessionStorage = require("connect-session-sequelize")(session.Store);
 
-// Process for loging functionality
+// Process for loging functionality (Needs to be fixed!)
 var process = require("process");
 var logger = require("./logger.js")(process.stdout.write);
 
@@ -20,7 +20,6 @@ var logger = require("./logger.js")(process.stdout.write);
 process.on("uncaughtException", errorWithLineNumbers);
 process.on("SIGINT", shutDown);
 logger.debug("\n====Starting awesome server!====");
-
 
 // Setup database connection
 var dbConnection = new sequelize("cookbook", "root", "nOHHDvNc88WQddUjXPuo", {
@@ -66,32 +65,13 @@ Promise.all(modelCreations).then((/*values*/) => {
         saveUninitialized: false
     }));
 
-    ///////////////////////////////////////////////////////////
-    // Frontend folder
-    app.use(express.static("public"));
-
-    // 3rd party library folders
-    const libWebRoot = "/lib/", libRealRoot = "node_modules/";
-    [
-        { webPath : "bootstrap",        realPath : "bootstrap/dist" },
-        { webPath : "jquery",           realPath : "jquery/dist" },
-        { webPath : "tether",           realPath : "tether/dist" },
-        { webPath : "angular",          realPath : "angular" },
-        { webPath : "angular-resource", realPath : "angular-resource" },
-        { webPath : "angular-route",    realPath : "angular-route" },
-        { webPath : "js-sha512",        realPath : "js-sha512" },
-        { webPath : "popper",           realPath : "popper.js/dist/umd" }
-    ].forEach((lib)=>{
-        app.use(libWebRoot + lib.webPath, express.static(libRealRoot + lib.realPath));
-    });
-
     // Api endpoints
     var endpointsArray = [
         require("./endpoints/users.js")(models)
     ];
     endpointsArray.forEach((endpointCollection) => {
         endpointCollection.forEach((endpoint) => {
-            app[endpoint.method]("/api" + endpoint.path, endpoint.handler);
+            app[endpoint.method](endpoint.path, endpoint.handler);
         });
     });
 

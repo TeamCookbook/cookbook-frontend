@@ -1,1 +1,8 @@
-Cookbook project! Details to come...
+# Cookbook project!
+
+Details to come...
+
+
+## Server in /backend
+
+## Website in /frontend

@@ -1,4 +1,5 @@
-var app = angular.module("cookbook", [
+/* global angular */
+window.app = angular.module("cookbook", [
     "ngRoute",
     // "base",
     "recipies",
