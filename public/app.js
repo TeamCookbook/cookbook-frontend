@@ -1,5 +1,6 @@
 var app = angular.module("cookbook", [
     "ngRoute",
+    "base",
     "recipies",
     "login"
 ]).config(["$locationProvider", "$routeProvider",

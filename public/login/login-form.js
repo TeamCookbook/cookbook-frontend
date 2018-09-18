@@ -15,10 +15,10 @@ angular.module("login", []).
                         $http.post("/api/login", {
                             user : self.username,
                             pass : sha512(self.password)
-                        }).then((result) => {
+                        }).then((/*result*/) => {
                             self.loading = false;
                             self.checkStatus();
-                        }, (error) => {
+                        }, (/*error*/) => {
                             self.loading = false;
                             self.checkStatus();
                         });
@@ -27,7 +27,7 @@ angular.module("login", []).
 
                 self.logout = function() {
                     self.loading = true;
-                    $http.post("/api/logout").then((result) => {
+                    $http.post("/api/logout").then((/*result*/) => {
                         self.loading = false;
                         self.checkStatus();
                     });
@@ -39,10 +39,10 @@ angular.module("login", []).
                         self.loading = true;
                         $http.post("/api/users/delete", {
                             user : self.username
-                        }).then((result) => {
+                        }).then((/*result*/) => {
                             self.loading = false;
                             self.checkStatus();
-                        }, (error) => {
+                        }, (/*result*/) => {
                             self.loading = false;
                             self.checkStatus();
                         });

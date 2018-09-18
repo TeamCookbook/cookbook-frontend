@@ -6,9 +6,7 @@ angular.module("recipies", []).
                 var self = this;
                 self.loading = true;
 
-                console.log("Loaded!");
                 $http.get("/api").then((result) =>{
-                    console.log(result);
                     if(result && result.data){
                         self.recipies = result.data;
                     }
@@ -17,4 +15,3 @@ angular.module("recipies", []).
             }
         ]
     });
-

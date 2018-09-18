@@ -5,20 +5,21 @@
 var sequelize = require("sequelize");
 
 // Express
-var express = require('express');
-var bodyParser = require('body-parser');
-var session = require('express-session');
+var express = require("express");
+var bodyParser = require("body-parser");
+var session = require("express-session");
 var sequelizeSessionStorage = require("connect-session-sequelize")(session.Store);
 
 // Process for loging functionality
-var process = require('process');
+var process = require("process");
+var logger = require("./logger.js")(process.stdout.write);
 
 ///////////////////////////////////////////////////////////
 // Startup & Setup
 //TODO: Write some better logging stuff which can be disabled
-process.on('uncaughtException', errorWithLineNumbers);
-process.on('SIGINT', shutDown);
-console.log("\n====Starting awesome server!====");
+process.on("uncaughtException", errorWithLineNumbers);
+process.on("SIGINT", shutDown);
+logger.debug("\n====Starting awesome server!====");
 
 
 // Setup database connection
@@ -44,7 +45,7 @@ var sessionStoreInstance = new sequelizeSessionStorage({
 modelCreations.push(sessionStoreInstance.sync());
 
 // Create/update models
-Promise.all(modelCreations).then(values => {
+Promise.all(modelCreations).then((/*values*/) => {
     // Create a test recipie
     /*models.recipies.create({
         name: "Random recipie #" + (Math.random() * 1000)
@@ -65,8 +66,9 @@ Promise.all(modelCreations).then(values => {
         saveUninitialized: false
     }));
 
+    ///////////////////////////////////////////////////////////
     // Frontend folder
-    app.use(express.static('public'));
+    app.use(express.static("public"));
 
     // 3rd party library folders
     const libWebRoot = "/lib/", libRealRoot = "node_modules/";
@@ -98,7 +100,7 @@ Promise.all(modelCreations).then(values => {
         var host = server.address().address;
         var port = server.address().port;
 
-        console.log('Web app listening at http://%s:%s', host, port);
+        logger.debug("Web app listening at http://%s:%s", host, port);
     });
 });
 
@@ -108,18 +110,18 @@ Promise.all(modelCreations).then(values => {
 function errorWithLineNumbers(err){
     var vStack = err.stack.split("\n"), vMaxDepth = 5;
     if(vStack.length < vMaxDepth) vMaxDepth = vStack.length;
-    console.log("\n====ERROR====\n" + vStack[0]);
+    logger.debug("\n====ERROR====\n" + vStack[0]);
     for(var i = 1; i < vMaxDepth; i++){
         var vLine = vStack[i];
         var vStart = vLine.indexOf("/"), vEnd = vLine.indexOf(")");
         vEnd = (vEnd > -1)?vEnd:(vLine.length);
-        //console.log("A: " + vStart + " B: " + vEnd + " " + vLine.substr(vStart, vEnd - vStart));
-        console.log(vLine.substr(vStart, vEnd - vStart));
+        //logger.debug("A: " + vStart + " B: " + vEnd + " " + vLine.substr(vStart, vEnd - vStart));
+        logger.debug(vLine.substr(vStart, vEnd - vStart));
     }
-    console.log("=============\n");
+    logger.debug("=============\n");
 }
 
 function shutDown(){
-    console.log("\b\b====Shutting down...====\n");
+    logger.debug("\b\b====Shutting down...====\n");
     process.exit(0);
 }

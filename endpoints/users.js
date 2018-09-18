@@ -6,7 +6,7 @@ module.exports = (models) =>{
         // GET all users
         endpoint.create("/users", "get", (req, res) => {
             if(!req.session.userLoggedIn) endpoint.error(401, "Unauthorized", res);
-            else {
+            else {
                 models.users.findAll().then((result) => {
                     res.send(result);
                 });
@@ -16,7 +16,7 @@ module.exports = (models) =>{
         // GET own user
         endpoint.create("/users/me", "get", (req, res) => {
             if(!req.session.userLoggedIn) endpoint.error(401, "Unauthorized", res);
-            else res.send(req.session.currentUser);
+            else res.send(req.session.currentUser);
         }),
 
         endpoint.create("/users/delete", "post", (req, res) => {
@@ -92,6 +92,12 @@ module.exports = (models) =>{
     ];
 };
 
+function generateSalt(length){
+    return crypto.randomBytes(Math.ceil(length/2))
+        .toString("hex") /** convert to hexadecimal format */
+        .slice(0,length);   /** return required number of characters */
+}
+
 function sha512(text, salt) {
     if(!salt) salt = generateSalt(128);
     var hash = crypto.createHmac("sha512", salt);
@@ -100,10 +106,4 @@ function sha512(text, salt) {
         salt : salt,
         pwHash : hash.digest("hex")
     };
-}
-
-function generateSalt(length){
-    return crypto.randomBytes(Math.ceil(length/2))
-        .toString("hex") /** convert to hexadecimal format */
-        .slice(0,length);   /** return required number of characters */
 }

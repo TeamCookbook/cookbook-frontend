@@ -1,11 +1,17 @@
+// Check for testing if a method name is allowed
+var methodNames = ["get", "post", "put", "delete"];
+function validMethod(method) {
+    return methodNames.indexOf(method) !== -1;
+}
+
 module.exports = {
     // Function for creating an expressJS friendly endpoint
-    create : (path, verb, handler) => {
-        if(!path || ! handler || !validVerb(verb)) return null;
+    create : (path, method, handler) => {
+        if(!path || ! handler || !validMethod(method)) return null;
         return {
             path : path,
             handler : handler,
-            verb : verb
+            method : method
         };
     },
 
@@ -26,8 +32,3 @@ module.exports = {
         req.session.currentUser = null;
     }
 };
-
-// Check for testing if a verb is allowed
-function validVerb(verb) {
-    return ["get", "post", "put", "delete"].indexOf(verb) !== -1;
-}

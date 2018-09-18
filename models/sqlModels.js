@@ -89,5 +89,10 @@ module.exports = (sequelize, connection) =>{
         denominator: { type: sequelize.STRING(100), field: "denominator" },
     }, { freezeTableName: true });
 
+    models.log = connection.define("log", {
+        id: { type: sequelize.INTEGER, field: "id", primaryKey: true },
+        content: { type: sequelize.STRING(500), field: "content" },
+    }, { freezeTableName: true });
+
     return models;
 };
