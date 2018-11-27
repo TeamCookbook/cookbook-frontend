@@ -1,15 +1,16 @@
 {
-  "name": "cookbook-frontend",
-  "version": "1.0.0",
-  "description": "Simple node script for showing the frontend",
-  "main": ".frontend.js",
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "express": "^4.16.3"
-  },
-  "repository": {
-      "type": "git",
-      "url": "https://github.com/marza91/cookbook"
-  }
+    "name": "cookbook-frontend",
+    "version": "1.0.0",
+    "description": "Simple node script for showing the frontend",
+    "main": ".frontend.js",
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.16.3",
+        "jquery": "^3.3.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/marza91/cookbook"
+    }
 }
