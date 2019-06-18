@@ -1,12 +1,7 @@
 <h1>Login</h1>
-<form ng-submit="$ctrl.login()">
-
+<form>
     <div class="col-xs-6">
-        <pre>{{$ctrl.userStatus}}</pre>
-        <div ng-show="$ctrl.error" class="alert alert-danger" role="alert">
-            <label>{{$ctrl.error}}</label>
-            <a ng-click="$ctrl.clearError()" class="float-right">&times;</a>
-        </div>
+        <!-- Error message here -->
         <input name="username" ng-model="$ctrl.username"/>
         <input name="password" type="password" ng-model="$ctrl.password"/>
 

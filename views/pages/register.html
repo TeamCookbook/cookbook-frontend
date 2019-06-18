@@ -1,11 +1,7 @@
 <h1>Register user</h1>
-<form ng-submit="$ctrl.register()">
-
+<form>
     <div class="col-xs-6">
-        <div ng-show="$ctrl.error" class="alert alert-danger" role="alert">
-            <label>{{$ctrl.error}}</label>
-            <a ng-click="$ctrl.clearError()" class="float-right">&times;</a>
-        </div>
+        <!-- Error message here -->
         <label>Username</label>
         <input class="form-control" name="username" ng-model="$ctrl.username"/>
         <label>Password</label>
